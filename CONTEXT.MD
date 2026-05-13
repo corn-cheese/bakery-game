@@ -209,8 +209,8 @@ The local `AGENTS.md` says:
 
 ## Recommended Next Steps
 
-1. Prepare the game for link-only sharing through static hosting.
-2. Push the initialized `main` repository to a GitHub remote and enable GitHub Pages from `main` / root.
+1. Enable GitHub Pages from `main` / root in `https://github.com/corn-cheese/bakery-game`.
+2. Share `https://corn-cheese.github.io/bakery-game/` after Pages finishes deploying.
 3. Consider adding short sound effects for select, success, reset, timer warning, and game over.
 4. Consider adding a more polished game-over/results UI.
 5. Keep CSS bakery tiles unless the user explicitly asks for bitmap tile sprites.
@@ -222,6 +222,7 @@ The local `AGENTS.md` says:
 - Removed the combo feature: no combo HUD, no combo state, no combo score multiplier, and no combo cheer state/message.
 - User clarified the online-sharing goal: friends should be able to open a single public link and play independently in their browsers. Recommended direction is static hosting, with GitHub Pages as the likely simplest durable option.
 - Added `.gitignore` and `README.md` for GitHub Pages sharing, initialized the current folder as an independent `main` git repository, and verified `npm test`, syntax checks, and an HTTP 200 static-server smoke check.
+- Added GitHub remote `https://github.com/corn-cheese/bakery-game.git` and pushed `main` successfully. Expected Pages URL after enabling Pages is `https://corn-cheese.github.io/bakery-game/`.
 - Renamed the project identity in docs and user-facing game text to Cloud Bakery / 구름 베이커리 게임.
 - Removed previous product wording from product docs and UI copy.
 - Updated `package.json` name to `cloud-bakery-game`.

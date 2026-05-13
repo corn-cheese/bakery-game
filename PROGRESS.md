@@ -28,7 +28,7 @@
 
 ## In Progress
 
-- Preparing the project for GitHub upload.
+- GitHub upload is complete.
 - The project identity is Cloud Bakery / 구름 베이커리 게임.
 
 ## Remaining Tasks
@@ -36,7 +36,7 @@
 - Consider adding sound effects for select, success, reset, timer warning, and game over.
 - Consider adding a more polished game-over/results UI.
 - Consider adding a build setup if the project moves to Vite or TypeScript later.
-- Push the newly initialized `main` repository to a GitHub remote, then enable GitHub Pages from `main` / root.
+- Enable GitHub Pages from `main` / root in `https://github.com/corn-cheese/bakery-game`.
 
 ## Known Bugs
 
@@ -55,6 +55,15 @@ py -m http.server 64779 --bind 127.0.0.1
 ```
 
 Latest static hosting smoke check returned HTTP 200 for `http://127.0.0.1:64779/index.html`.
+
+## Latest GitHub Upload
+
+2026-05-14:
+
+- Initialized this folder as an independent `main` git repository.
+- Added GitHub remote `https://github.com/corn-cheese/bakery-game.git`.
+- Pushed `main` to GitHub successfully.
+- Next step: enable GitHub Pages from `main` / root, then share `https://corn-cheese.github.io/bakery-game/`.
 
 ## Latest Music Update
 
