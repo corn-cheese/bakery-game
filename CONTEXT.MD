@@ -36,7 +36,7 @@ Current files:
 
 - `package.json`
   - Package name: `cloud-bakery-game`.
-  - Test command: `npm test`, currently mapped to `node tests/gameLogic.test.js && node tests/backgroundMusic.test.js` because `node --test` hit `spawn EPERM` in this environment.
+  - Test command: `npm test`, currently mapped to direct test-file execution because `node --test` hit `spawn EPERM` in this environment.
 
 - `.gitignore`
   - Excludes `.superpowers/`, `node_modules/`, and common OS metadata from the public GitHub repository.
@@ -61,10 +61,23 @@ Current files:
   - Web Audio background music module for the selected A Sun Bakery Canon direction.
   - Exports testable music data, loop-plan generation, note frequency conversion, and the browser music controller.
 
+- `src/soundEffects.js`
+  - Web Audio sound effect module for select, success, reset, timer warning, and game over.
+  - Exports testable effect definitions and browser playback controller.
+
+- `src/results.js`
+  - Pure result summary helper for the game-over overlay.
+  - Converts score and selected duration into score, cleared tile count, mode, and encouragement text.
+
 - `src/app.js`
   - Browser interaction layer.
-  - Handles time mode selection, start/restart, pointer drag selection, scoring, automatic reset, timer, cheerleader messages, and background music start/mute control.
+  - Handles time mode selection, start/restart, pointer drag selection, scoring, automatic reset, timer, cheerleader messages, background music start/mute control, sound effects, and the start/results overlay.
   - User-facing copy now uses bakery/tile wording.
+  - Empty removed tiles remain valid drag corners, so players can draw rectangles through or from blank spaces after tiles are cleared.
+
+- `src/tileCell.js`
+  - Small DOM helper for resolving a tile element or descendant to board coordinates.
+  - Allows both active and empty tiles to be used as rectangle corners.
 
 - `src/styles.css`
   - Current visual styling.
@@ -89,6 +102,15 @@ Current files:
 
 - `tests/backgroundMusic.test.js`
   - Tests that the selected A Sun Bakery Canon loop data, canon answer delay, bass scheduling, pulse count, and note frequency conversion are stable.
+
+- `tests/soundEffects.test.js`
+  - Tests the required game event sound set and selected effect timing.
+
+- `tests/results.test.js`
+  - Tests game-over result summary copy for score, cleared tiles, mode, and encouragement text.
+
+- `tests/tileCell.test.js`
+  - Regression test for selecting empty tile corners after tiles have been removed.
 
 - `music-demo.html`
   - Browser preview page for canon-based 8-bit MIDI direction demos.
@@ -118,22 +140,27 @@ Implemented behavior:
 - Player starts/restarts the game with the start button.
 - The selected A Sun Bakery Canon background music starts from a user gesture and can be toggled with the `음악 켜짐/음악 꺼짐` HUD button.
 - Player drags across the board to select a rectangular area.
+- A short select sound plays when a drag starts.
 - Current selected sum is displayed.
 - If the selected sum is 10:
   - selected tiles are removed,
   - score increases by the base tile score,
   - cheerleader message changes,
-  - cheerleader animation restarts.
+  - cheerleader animation restarts,
+  - a success sound plays.
 - If the selected sum is not 10:
   - selection clears.
 - If no valid rectangular selection summing to 10 remains:
   - board automatically resets after a short delay,
-  - message explains that a new board is coming.
+  - message explains that a new board is coming,
+  - a soft reset sound plays.
 - At 10 seconds remaining:
-  - urgent cheerleader message appears.
+  - urgent cheerleader message appears,
+  - a timer warning sound plays.
 - At timer end:
   - game stops,
-  - final score overlay appears.
+  - a game-over sound plays,
+  - a structured result overlay appears with score, cleared tile count, mode, and a short result message.
 
 Separate music demo behavior:
 
@@ -153,6 +180,8 @@ Most recent successful verification commands:
 ```powershell
 node --check src/backgroundMusic.js
 node --check src/app.js
+node --check src/soundEffects.js
+node --check src/results.js
 node --check src/musicDemo.js
 node --check scripts/generateMidiDemos.mjs
 npm test
@@ -160,15 +189,20 @@ npm test
 
 Most recent successful verification result:
 
-- 10 tests passed.
+- 15 tests passed.
 - 0 tests failed.
 - `src/backgroundMusic.js` syntax check passed.
 - `src/app.js` syntax check passed.
+- `src/soundEffects.js` syntax check passed.
+- `src/results.js` syntax check passed.
 - `src/musicDemo.js` syntax check passed.
 - `scripts/generateMidiDemos.mjs` syntax check passed.
+- Local HTTP smoke check for `http://127.0.0.1:64780/index.html` returned status 200.
 - Local HTTP smoke check for `http://127.0.0.1:64778/index.html` returned status 200.
 - Local HTTP smoke check for `http://127.0.0.1:64779/index.html` returned status 200 during GitHub Pages preparation.
+- Remote GitHub Pages check for `https://corn-cheese.github.io/bakery-game/` returned HTTP 404 on 2026-05-14, and the unauthenticated GitHub Pages API check also returned 404.
 - In-app browser verification was attempted, but the Browser Use `iab` backend was unavailable in this session.
+- 2026-05-14 empty-corner bugfix verification: `node --check src/app.js`, `node --check src/tileCell.js`, and `npm test` passed; `npm test` now includes 16 total node tests across the direct test files.
 
 The app has previously been served with:
 
@@ -209,16 +243,24 @@ The local `AGENTS.md` says:
 
 ## Recommended Next Steps
 
-1. Enable GitHub Pages from `main` / root in `https://github.com/corn-cheese/bakery-game`.
+1. Enable GitHub Pages from `main` / root in `https://github.com/corn-cheese/bakery-game`; this environment has no `gh` CLI or `GITHUB_TOKEN`, so it could not be enabled programmatically here.
 2. Share `https://corn-cheese.github.io/bakery-game/` after Pages finishes deploying.
-3. Consider adding short sound effects for select, success, reset, timer warning, and game over.
-4. Consider adding a more polished game-over/results UI.
-5. Keep CSS bakery tiles unless the user explicitly asks for bitmap tile sprites.
+3. Keep CSS bakery tiles unless the user explicitly asks for bitmap tile sprites.
+4. Do not add a Vite/TypeScript build setup unless the project actually moves to that toolchain later.
 
 ## Latest Change Log
 
 2026-05-14:
 
+- Fixed the rectangle selection bug where cleared/empty tiles could not be used as drag corners.
+- Moved tile coordinate lookup into `src/tileCell.js`, updated `src/app.js` to allow empty tile coordinates, and stopped disabling empty tile buttons so pointer events can start/end on them.
+- Added `tests/tileCell.test.js` and updated `package.json` so `npm test` covers the empty-corner regression.
+- Verified `node --check src/app.js`, `node --check src/tileCell.js`, and `npm test`.
+- Added short Web Audio sound effects for select, success, reset, timer warning, and game over through `src/soundEffects.js`.
+- Added `tests/soundEffects.test.js`, `src/results.js`, and `tests/results.test.js`.
+- Updated the main game overlay so the start state and game-over state render as structured panels; results now show final score, cleared tile count, selected mode, and a short message.
+- Verified `node --check src/app.js`, `node --check src/soundEffects.js`, `node --check src/results.js`, `npm test`, and local HTTP 200 on `http://127.0.0.1:64780/index.html`.
+- Confirmed the expected public Pages URL still returns 404 until GitHub Pages is enabled.
 - Removed the combo feature: no combo HUD, no combo state, no combo score multiplier, and no combo cheer state/message.
 - User clarified the online-sharing goal: friends should be able to open a single public link and play independently in their browsers. Recommended direction is static hosting, with GitHub Pages as the likely simplest durable option.
 - Added `.gitignore` and `README.md` for GitHub Pages sharing, initialized the current folder as an independent `main` git repository, and verified `npm test`, syntax checks, and an HTTP 200 static-server smoke check.

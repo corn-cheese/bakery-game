@@ -7,6 +7,9 @@ import {
   sumCells
 } from "./gameLogic.js";
 import { createBackgroundMusic } from "./backgroundMusic.js";
+import { createSoundEffects } from "./soundEffects.js";
+import { createResultSummary } from "./results.js";
+import { getTileCell } from "./tileCell.js";
 
 const boardEl = document.querySelector("[data-board]");
 const timeEl = document.querySelector("[data-time]");
@@ -38,8 +41,10 @@ let dragStart = null;
 let selectedCells = [];
 let audioContext = null;
 let backgroundMusic = null;
+let soundEffects = null;
 let isMusicMuted = false;
 
+renderIntroOverlay();
 render();
 
 modeButtons.forEach((button) => {
@@ -60,6 +65,7 @@ startButton.addEventListener("click", () => {
 musicButton.addEventListener("click", () => {
   isMusicMuted = !isMusicMuted;
   backgroundMusic?.setMuted(isMusicMuted);
+  soundEffects?.setMuted(isMusicMuted);
   if (!isMusicMuted) startMusic();
   renderMusicButton();
 });
@@ -71,6 +77,7 @@ boardEl.addEventListener("pointerdown", (event) => {
   boardEl.setPointerCapture(event.pointerId);
   dragStart = cell;
   selectedCells = [cell];
+  playSound("select");
   updateSelection(cell);
 });
 
@@ -109,6 +116,7 @@ function tick() {
 
   if (remainingSeconds === 10) {
     setMessage("urgent", messages.urgent);
+    playSound("timerWarning");
   }
 
   if (remainingSeconds <= 0) {
@@ -124,9 +132,10 @@ function endGame() {
   timerId = null;
   isPlaying = false;
   clearSelection();
-  overlayEl.textContent = `게임 종료! 최종 점수 ${score}`;
+  renderResultOverlay();
   overlayEl.classList.remove("is-hidden");
   setMessage("end", messages.end);
+  playSound("gameOver");
   renderHud();
 }
 
@@ -143,12 +152,14 @@ function commitSelection() {
     board = result.board;
     score += result.points;
     setMessage("success", messages.success);
+    playSound("success");
 
     if (!hasValidMove(board)) {
       setTimeout(() => {
         if (!isPlaying) return;
         board = createPlayableBoard();
         setMessage("reset", messages.reset);
+        playSound("reset");
         render();
       }, 650);
     }
@@ -205,7 +216,6 @@ function renderTiles() {
 
         if (value === null) {
           tile.classList.add("is-empty");
-          tile.disabled = true;
         }
 
         if (selectedSet.has(cellKey({ row: rowIndex, col: colIndex }))) {
@@ -226,13 +236,48 @@ function renderSelectionSum() {
   selectionSumEl.classList.toggle("is-over", selectedSum > TARGET_SUM);
 }
 
-function getTileCell(target) {
-  const tile = target?.closest?.(".tile");
-  if (!tile || tile.classList.contains("is-empty")) return null;
-  return {
-    row: Number(tile.dataset.row),
-    col: Number(tile.dataset.col)
-  };
+function renderIntroOverlay() {
+  overlayEl.replaceChildren(
+    createOverlayPanel(
+      "구름 베이커리",
+      "2분 또는 5분을 고르고 시작하세요",
+      ["합계 10", "드래그 선택", "자동 새 보드"]
+    )
+  );
+}
+
+function renderResultOverlay() {
+  const summary = createResultSummary({ score, durationSeconds: selectedDuration });
+
+  overlayEl.replaceChildren(
+    createOverlayPanel(summary.title, summary.scoreText, [
+      summary.clearedText,
+      summary.durationText,
+      summary.message
+    ])
+  );
+}
+
+function createOverlayPanel(title, highlight, details) {
+  const panel = document.createElement("div");
+  const titleEl = document.createElement("strong");
+  const highlightEl = document.createElement("span");
+  const detailList = document.createElement("ul");
+
+  panel.className = "result-card";
+  titleEl.className = "result-title";
+  highlightEl.className = "result-score";
+  titleEl.textContent = title;
+  highlightEl.textContent = highlight;
+
+  details.forEach((detail) => {
+    const item = document.createElement("li");
+    item.textContent = detail;
+    detailList.append(item);
+  });
+
+  panel.append(titleEl, highlightEl, detailList);
+  return panel;
 }
 
 function setMessage(state, text) {
@@ -257,17 +302,30 @@ function cellKey({ row, col }) {
 }
 
 async function startMusic() {
+  if (!(await ensureAudio())) return;
+
+  backgroundMusic = backgroundMusic ?? createBackgroundMusic(audioContext);
+  backgroundMusic.setMuted(isMusicMuted);
+  backgroundMusic.start();
+}
+
+async function ensureAudio() {
   const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
-  if (!AudioContextConstructor) return;
+  if (!AudioContextConstructor) return false;
 
   audioContext = audioContext ?? new AudioContextConstructor();
   if (audioContext.state === "suspended") {
     await audioContext.resume();
   }
 
-  backgroundMusic = backgroundMusic ?? createBackgroundMusic(audioContext);
-  backgroundMusic.setMuted(isMusicMuted);
-  backgroundMusic.start();
+  soundEffects = soundEffects ?? createSoundEffects(audioContext);
+  soundEffects.setMuted(isMusicMuted);
+  return true;
+}
+
+async function playSound(name) {
+  if (!(await ensureAudio())) return;
+  soundEffects?.play(name);
 }
 
 function renderMusicButton() {

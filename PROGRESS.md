@@ -25,18 +25,20 @@
 - Removed combo scoring, combo HUD, and combo cheer messaging.
 - Prepared the game folder for link-only sharing through GitHub Pages static hosting.
 - Added `.gitignore` and `README.md` with local run and GitHub Pages deployment notes.
+- Added short Web Audio sound effects for select, success, reset, timer warning, and game over.
+- Added a polished start/results overlay with score, cleared tile count, selected mode, and result message.
+- Fixed rectangle dragging so cleared/empty tiles can be used as selection corners.
 
 ## In Progress
 
 - GitHub upload is complete.
 - The project identity is Cloud Bakery / 구름 베이커리 게임.
+- GitHub Pages is not active yet: `https://corn-cheese.github.io/bakery-game/` returned HTTP 404 on 2026-05-14.
 
 ## Remaining Tasks
 
-- Consider adding sound effects for select, success, reset, timer warning, and game over.
-- Consider adding a more polished game-over/results UI.
-- Consider adding a build setup if the project moves to Vite or TypeScript later.
 - Enable GitHub Pages from `main` / root in `https://github.com/corn-cheese/bakery-game`.
+- Do not add a Vite/TypeScript build setup unless the project actually moves to that toolchain later.
 
 ## Known Bugs
 
@@ -48,13 +50,39 @@
 ```powershell
 node --check src/backgroundMusic.js
 node --check src/app.js
+node --check src/soundEffects.js
+node --check src/results.js
 node --check src/musicDemo.js
 node --check scripts/generateMidiDemos.mjs
+node --check src/tileCell.js
 npm test
-py -m http.server 64779 --bind 127.0.0.1
+py -m http.server 64780 --bind 127.0.0.1
 ```
 
-Latest static hosting smoke check returned HTTP 200 for `http://127.0.0.1:64779/index.html`.
+Latest static hosting smoke check returned HTTP 200 for `http://127.0.0.1:64780/index.html`.
+Remote Pages check returned 404 for `https://corn-cheese.github.io/bakery-game/`, so the public link is not playable until Pages is enabled in GitHub settings.
+
+## Latest Empty-Corner Drag Bugfix
+
+2026-05-14:
+
+- Root cause: empty tiles were disabled in `src/app.js`, and tile coordinate lookup rejected `.is-empty` tiles, so blank spaces could not start or finish rectangle drags.
+- Added `src/tileCell.js` to resolve tile coordinates for both active and empty tiles.
+- Updated `src/app.js` to keep empty tiles interactive for pointer dragging while still rendering them visually empty.
+- Added `tests/tileCell.test.js` and included it in `npm test`.
+- Verified `node --check src/app.js`, `node --check src/tileCell.js`, and `npm test`.
+
+## Latest SFX and Results UI Update
+
+2026-05-14:
+
+- Added `src/soundEffects.js` with short Web Audio cues for tile select, success, board reset, 10-second warning, and game over.
+- Added `tests/soundEffects.test.js` to lock the event set and effect timing.
+- Added `src/results.js` and `tests/results.test.js` for final score/result summary text.
+- Updated `src/app.js` to play the new effects and render a structured start/results overlay.
+- Updated `src/styles.css` with the compact result card styling.
+- Updated `package.json` so `npm test` includes sound effect and result summary tests.
+- Verified `node --check src/app.js`, `node --check src/soundEffects.js`, `node --check src/results.js`, `npm test`, and local HTTP 200 on `http://127.0.0.1:64780/index.html`.
 
 ## Latest GitHub Upload
 

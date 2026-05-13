@@ -4,6 +4,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node tests/gameLogic.test.js && node tests/backgroundMusic.test.js && node tests/noComboFeature.test.js"
+    "test": "node tests/gameLogic.test.js && node tests/backgroundMusic.test.js && node tests/noComboFeature.test.js && node tests/soundEffects.test.js && node tests/results.test.js && node tests/tileCell.test.js"
   }
 }

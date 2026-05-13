@@ -239,6 +239,38 @@ button {
   display: none;
 }
 
+.result-card {
+  width: min(100%, 360px);
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  border: 3px solid #efb7c7;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .95);
+  box-shadow: 0 12px 24px rgba(91, 52, 36, .18);
+}
+
+.result-title {
+  color: #713f54;
+  font-size: clamp(18px, 3vw, 26px);
+}
+
+.result-score {
+  color: #d84f79;
+  font-size: clamp(30px, 7vw, 54px);
+  line-height: 1;
+}
+
+.result-card ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 15px;
+  color: #5b3424;
+}
+
 .cheer-panel {
   padding: 10px 10px 16px;
   display: grid;
