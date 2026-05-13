@@ -19,5 +19,5 @@ http://127.0.0.1:64777/index.html
 혹은 다음 링크에 접속합니다.
 
 ```text
-[https://corn-cheese.github.io/<repository-name>/](https://corn-cheese.github.io/bakery-game/)
+https://corn-cheese.github.io/<repository-name>/](https://corn-cheese.github.io/bakery-game/
 ```
