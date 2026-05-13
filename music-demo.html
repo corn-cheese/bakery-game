@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>베이커리 게임 MIDI 데모</title>
+    <link rel="stylesheet" href="./src/styles.css">
+    <style>
+      .music-panel {
+        width: min(880px, calc(100% - 28px));
+        margin: 32px auto;
+        padding: 22px;
+        border: 2px solid rgba(255,255,255,.9);
+        border-radius: 8px;
+        background: rgba(255,255,255,.78);
+        box-shadow: 0 18px 38px rgba(84, 118, 150, .22);
+      }
+      .music-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .music-card {
+        padding: 16px;
+        border: 2px solid #efb7c7;
+        border-radius: 8px;
+        background: #fff8e8;
+      }
+      .music-card.is-selected {
+        border-color: #d99534;
+        background: #fff1b8;
+      }
+      .music-card h2 {
+        margin: 0 0 8px;
+        font-size: 20px;
+      }
+      .music-card .selected-label {
+        display: inline-block;
+        margin-bottom: 8px;
+        padding: 4px 8px;
+        border-radius: 8px;
+        background: #5b3424;
+        color: white;
+        font-size: 13px;
+        font-weight: 900;
+      }
+      .music-card p {
+        min-height: 56px;
+        margin: 0 0 12px;
+      }
+      .music-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .music-actions button,
+      .music-actions a {
+        min-height: 40px;
+        padding: 8px 12px;
+        border: 2px solid #d99534;
+        border-radius: 8px;
+        background: #ffe68d;
+        color: #5b3424;
+        font-weight: 900;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .now-playing {
+        margin: 16px 0 0;
+        padding: 12px;
+        border-radius: 8px;
+        background: white;
+        font-weight: 900;
+      }
+      @media (max-width: 720px) {
+        .music-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="music-panel">
+      <h1>캐논 대위법 MIDI 데모</h1>
+      <p>짧은 동기, 반복과 변형, 안정적인 코드 진행을 바탕으로 만든 8-bit 게임 배경음악 후보입니다. A가 선택된 기본 방향이고, 각 곡은 선율을 시간차로 따라 부르는 캐논 구조를 사용합니다.</p>
+
+      <section class="music-grid">
+        <article class="music-card is-selected">
+          <span class="selected-label">선택된 방향</span>
+          <h2>A. 햇살 베이커리 캐논</h2>
+          <p>밝은 C장조 진행 위에서 두 성부가 2박 간격으로 따라오는 기본형 캐논입니다.</p>
+          <div class="music-actions">
+            <button type="button" data-play="a">듣기</button>
+            <a href="./assets/music/demo-a-sun-bakery.mid" download>mid 받기</a>
+          </div>
+        </article>
+        <article class="music-card">
+          <h2>B. 몽글몽글 구름 캐논</h2>
+          <p>느린 3박자 흐름에 낮은 옥타브 응답을 얹은 부드러운 휴식형 루프입니다.</p>
+          <div class="music-actions">
+            <button type="button" data-play="b">듣기</button>
+            <a href="./assets/music/demo-b-cloud-soft.mid" download>mid 받기</a>
+          </div>
+        </article>
+        <article class="music-card">
+          <h2>C. 아케이드 집중 캐논</h2>
+          <p>빠른 템포와 1박 간격 모방으로 퍼즐 플레이의 긴장감을 살린 리듬형 캐논입니다.</p>
+          <div class="music-actions">
+            <button type="button" data-play="c">듣기</button>
+            <a href="./assets/music/demo-c-arcade-focus.mid" download>mid 받기</a>
+          </div>
+        </article>
+        <article class="music-card">
+          <h2>D. 디저트 마법 미러 캐논</h2>
+          <p>원 선율의 진행 방향을 뒤집어 응답시키는 반진행 캐논으로 반짝이는 느낌을 냈습니다.</p>
+          <div class="music-actions">
+            <button type="button" data-play="d">듣기</button>
+            <a href="./assets/music/demo-d-dessert-magic.mid" download>mid 받기</a>
+          </div>
+        </article>
+      </section>
+
+      <div class="music-actions" style="margin-top:16px">
+        <button type="button" data-stop>정지</button>
+        <a href="./index.html">게임으로 돌아가기</a>
+      </div>
+      <div class="now-playing" data-now-playing>대기 중</div>
+    </main>
+
+    <script type="module" src="./src/musicDemo.js"></script>
+  </body>
+</html>

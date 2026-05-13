@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>구름 베이커리 게임</title>
+    <link rel="stylesheet" href="./src/styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="game-stage" aria-label="구름 베이커리 게임">
+        <div class="play-area">
+          <header class="hud">
+            <div class="time-select" aria-label="시간 선택">
+              <button class="mode-button is-active" type="button" data-duration="120">2분</button>
+              <button class="mode-button" type="button" data-duration="300">5분</button>
+            </div>
+            <button class="start-button" type="button" data-start>시작</button>
+            <button class="music-button" type="button" data-music aria-pressed="true">음악 켜짐</button>
+            <div class="stat">
+              <span>시간</span>
+              <strong data-time>02:00</strong>
+            </div>
+            <div class="stat">
+              <span>점수</span>
+              <strong data-score>0</strong>
+            </div>
+          </header>
+
+          <div class="board-wrap">
+            <div class="selection-sum" data-selection-sum>합계 0</div>
+            <div class="board" data-board aria-label="10x10 베이커리 보드"></div>
+            <div class="board-overlay" data-overlay>2분 또는 5분을 고르고 시작하세요</div>
+          </div>
+        </div>
+
+        <aside class="cheer-panel" aria-label="응원 치어리더">
+          <div class="cheer-portrait" data-cheer-state="idle">
+            <img src="./assets/cheerleader-pink-pastry.png" alt="분홍 머리 파티시에 치어리더">
+          </div>
+          <div class="speech" data-message>구름 베이커리에 온 걸 환영해요!</div>
+        </aside>
+      </section>
+    </main>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
